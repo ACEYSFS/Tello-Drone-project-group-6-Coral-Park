@@ -1,0 +1,67 @@
+code for take off 
+
+
+from djitellopy import tello
+import cv2
+import time
+
+drone = tello.Tello()
+drone.connect()
+
+#gets tempature
+def get_temperature(self) -> float:
+    """Get average temperature
+    Returns:
+        float: average temperature (°C)
+    """
+    templ = self.get_lowest_temperature()
+    temph = self.get_highest_temperature()
+    return (templ + temph) / 2
+#gets the absolute hight (barometer)
+def get_barometer(self) -> int:
+    """Get current barometer measurement in cm
+    This resembles the absolute height.i''''[-.]
+    Returns:
+        int: barometer measurement in cm
+    """
+    return self.get_state_field('baro') * 100
+
+#battery check 
+def get_battery(self) -> int:
+    """Get current battery percentage
+    Returns:
+        int: 0-100
+    """
+    return self.get_state_field('bat')
+
+def takeoff(self):
+    """Automatic takeoff.
+    """
+    # Something it takes a looooot of time to take off and return a succesful takeoff.
+    # So we better wait. Otherwise, it would give us an error on the following calls.
+    self.send_control_command("takeoff", timeout=Tello.TAKEOFF_TIMEOUT)
+    self.is_flying = True
+
+def land(self):
+    """Automatic landing.
+    """
+    self.send_control_command("land")
+    self.is_flying = False
+
+
+drone.streamon()
+
+while True: 
+    frame = drone.get_frame_read().frame
+    cv2.imshow("Tello", frame)
+    cv2.waitKey(1)
+
+
+    drone.takeoff()
+
+    print("start")
+    sleep(3)
+    print("stop")
+
+    drone.land()
+    
